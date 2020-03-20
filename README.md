@@ -1,11 +1,15 @@
 <img align="right" src="https://raw.githubusercontent.com/brandmaker/MediaPoolWebHookConsumer/master/BrandMaker_Logo_on_light_bg.png" alt="BrandMaker" width="30%" height="30%">
 
-# BrandMaker MadiaPool WebHook API Example
+# BrandMaker MadiaPool WebHook Consumer Example
+
+## Motivation
 
 In order to synchronize contents and assets, which are stored in BrandMakers DAM Solution "Media Pool", a powefull WebHook integration is offered.
 
 To register and retrieve events from this integration, integrators need to implement a REST endpoint to capture the POST data and pull 
 the according information from the MediaPool API.
+
+## Scope
 
 This repository contains a blue print for a webhook, which is capable of the following:
 
@@ -18,4 +22,10 @@ This repository contains a blue print for a webhook, which is capable of the fol
 * store metadata as JSON to local file system
 
 
-----
+## Usage
+
+- TBD
+
+## Project state
+
+[![Build Status](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer.svg?branch=master)](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer)
