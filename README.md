@@ -1,4 +1,5 @@
-![alt text](https://raw.githubusercontent.com/brandmaker/MediaPoolApi/master/BrandMaker_Logo_on_light_bg.png "BrandMaker")
+<img align="right" src="https://raw.githubusercontent.com/brandmaker/MediaPoolApi/master/BrandMaker_Logo_on_light_bg.png" alt=""BrandMaker" width="30%" height="30%">
+
 
 # BrandMaker MadiaPool WebHook API Example
 
