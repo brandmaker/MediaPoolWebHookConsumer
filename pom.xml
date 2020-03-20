@@ -8,14 +8,39 @@
 		<version>2.3.0.M3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	
 	<groupId>com.brandmaker.mediapool</groupId>
-	<artifactId>MediaPoolAPi</artifactId>
+	<artifactId>webhook.consumer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>MediaPoolAPi</name>
+	<name>webhook.consumer</name>
 	<description>Demo project for a BrandMaker Media Pool WebHook Consumer</description>
 
+	<organization>
+		<name>BrandMaker GmbH</name>
+		<url>http://www.brandmaker.com/</url>
+	</organization>
+
+	<developers>
+	    <developer>
+	      <name>Axel Amthor</name>
+	      <id>axel.amthor</id>
+	      <email>axel.amthor@brandmaker.com</email>
+	      <organization>BrandMaker GmbH</organization>
+	    </developer>
+	    <developer>
+	      <name>Vi-Hong Huynh</name>
+	      <id>vi-hong.huynh</id>
+	      <email>vi-hong.huynh@brandmaker.com</email>
+	      <organization>BrandMaker GmbH</organization>
+	    </developer>
+    </developers>
+    
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
+		<generated-sources-java-path>main/java</generated-sources-java-path>
+		<sling.java.version>1.8</sling.java.version>
 		<java.version>1.8</java.version>
 	</properties>
 

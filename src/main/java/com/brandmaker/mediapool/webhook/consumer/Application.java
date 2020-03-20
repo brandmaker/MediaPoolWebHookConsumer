@@ -1,13 +1,13 @@
-package com.brandmaker.mediapool.MediaPoolAPi;
+package com.brandmaker.mediapool.webhook.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MediaPoolAPiApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MediaPoolAPiApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }
