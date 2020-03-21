@@ -21,6 +21,14 @@ This repository contains a blue print for a webhook, which is capable of the fol
 * store binary to local file system
 * store metadata as JSON to local file system
 
+## Prerequisits
+
+Please make yousrselve familiar with the basic principles of Webhooks. There are two comprehensive and recommended introductions available here:
+* https://requestbin.com/blog/working-with-webhooks/
+* https://en.wikipedia.org/wiki/Webhook. 
+
+Furthermore, to understand how BrandMaker Media Pool is making use of this kind of loosely coupled integrations, read the tutorial available here
+
 
 ## Usage
 
