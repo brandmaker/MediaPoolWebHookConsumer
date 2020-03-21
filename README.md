@@ -28,7 +28,7 @@ Please make yousrselve familiar with the basic principles of Webhooks. There are
 * https://en.wikipedia.org/wiki/Webhook. 
 
 Furthermore, to understand how BrandMaker Media Pool is making use of this kind of loosely coupled integrations, read the tutorial available here
-
+https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_WebHook-Push-API-Description_6-6_EN_20200203.pdf
 
 ## Usage
 
