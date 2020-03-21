@@ -1,0 +1,25 @@
+##
+#
+# config for Demo Web Hook 
+# (c) BardnMaker GmbH, 2020
+#
+##
+ 
+spring:
+     application:
+          name: "BrandMaker Media Pool Web Hook Example"
+          
+          system:
+          
+              # BM System ID we accept requests from
+              systemId: "123-456-789"
+              
+              # BM customer ID we accept requests from
+              customerId: "aaa-bbb-ccc"
+              
+              # BM private key to validate request signatures
+              privateKey: "somevalue"
+          
+     server:
+          port: 8080
+          # we leave that as it is
