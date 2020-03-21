@@ -4,7 +4,7 @@
 
 ## Motivation
 
-In order to synchronize contents and assets, which are stored in BrandMakers DAM Solution "Media Pool", a powefull WebHook integration is offered.
+In order to synchronize contents and assets, which are stored in BrandMakers DAM Solution "Media Pool", a powerfull WebHook integration is offered.
 
 To register and retrieve events from this integration, integrators need to implement a REST endpoint to capture the POST data and pull 
 the according information from the MediaPool API.
@@ -23,7 +23,8 @@ This repository contains a blue print for a webhook, which is capable of the fol
 
 ## Prerequisits
 
-Please make yousrselve familiar with the basic principles of Webhooks. There are two comprehensive and recommended introductions available here:
+Please make yousrself familiar with the basic principles of Webhooks. There are two comprehensive and recommended introductions available here:
+
 * https://requestbin.com/blog/working-with-webhooks/
 * https://en.wikipedia.org/wiki/Webhook. 
 
@@ -37,3 +38,13 @@ https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_We
 ## Project state
 
 [![Build Status](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer.svg?branch=master)](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer)
+
+
+# Getting Started
+
+### Reference Documentation
+For further reference, please consider the following sections:
+
+* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
+* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.3.0.M3/maven-plugin/html/)
+* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.3.0.M3/maven-plugin/html/#build-image)
