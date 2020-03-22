@@ -33,6 +33,16 @@ https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_We
 
 ## Usage
 
+### Build
+- TBD
+
+### Test
+
+In order to test your Media Pool Webhook, open a CLI in the parent of your target directory within your project and start springboot with
+
+		`java -Dserver.address=0.0.0.0 -jar target\webhook.consumer-0.0.1-SNAPSHOT.jar`
+
+### Deploy
 - TBD
 
 ## Project state

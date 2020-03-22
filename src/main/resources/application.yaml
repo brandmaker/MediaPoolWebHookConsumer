@@ -1,25 +1,31 @@
 ##
 #
-# config for Demo Web Hook 
+# Application settings for Demo Web Hook 
+#
 # (c) BardnMaker GmbH, 2020
 #
 ##
  
 spring:
      application:
-          name: "BrandMaker Media Pool Web Hook Example"
+          name: BrandMaker Media Pool Web Hook Example
           
           system:
           
               # BM System ID we accept requests from
-              systemId: "123-456-789"
+              systemId: 123-456-789
               
               # BM customer ID we accept requests from
-              customerId: "aaa-bbb-ccc"
+              customerId: aaa-bbb-ccc
               
               # BM private key to validate request signatures
-              privateKey: "somevalue"
+              privateKey: somevalue
           
      server:
           port: 8080
           # we leave that as it is
+          
+          address: 0.0.0.0
+          # listen on all interfaces
+          # if this is a local dev machine, and you have a port forwarding enabled to that, ensure the Win10/Mac FW isn't blocking that!
+          # if your port is different from 80, please contact BM support to open that port in the FW for outgoing connections on your instance as well!
