@@ -31,6 +31,12 @@ Please make yousrself familiar with the basic principles of Webhooks. There are 
 Furthermore, to understand how BrandMaker Media Pool is making use of this kind of loosely coupled integrations, read the tutorial available here
 https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_WebHook-Push-API-Description_6-6_EN_20200203.pdf
 
+## General Concept
+
+According to the recommendations to not to process the events immediately within the hook itself, the structure of a basic consumer looks like
+
+![Consumer Structure](./Media%20Poool%20Web-Hooks%20Consumer.png)
+
 ## Usage
 
 ### Build
@@ -52,7 +58,7 @@ java -Dserver.address=0.0.0.0 -jar target\webhook.consumer-0.0.1-SNAPSHOT.jar
 [![Build Status](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer.svg?branch=master)](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer)
 
 
-# Getting Started
+# Further Information
 
 ### Reference Documentation
 For further reference, please consider the following sections:
