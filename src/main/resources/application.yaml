@@ -18,8 +18,12 @@ spring:
               # BM customer ID we accept requests from
               customerId: aaa-bbb-ccc
               
-              # BM private key to validate request signatures
-              privateKey: somevalue
+              # BM public key to validate request signatures
+              publickey: somevalue
+              
+              # The channel or the channels, this webhook is responsible for. We take the standard here
+              # please refer to the documentation of publication channels in the media pool manual!
+              channels: PUBLIC_LINKS, SHARE
           
      server:
           port: 8080

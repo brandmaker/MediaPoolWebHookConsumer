@@ -3,7 +3,7 @@ package com.brandmaker.mediapool.webhook.rest.controller;
 
 
 /**
- * <p>Reeponse PoJo to autmatically generate a JSON response through spring converter
+ * <p>Reeponse PoJo to automatically generate a JSON response through spring converter
  * 
  * @author axel.amthor
  *

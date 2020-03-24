@@ -1,10 +1,20 @@
 package com.brandmaker.mediapool.webhook.rest.controller;
 
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.brandmaker.mediapool.webhook.MediaPoolEvent;
+import com.brandmaker.mediapool.webhook.WebhookException;
 
 /**
  * <p>Hook controller
@@ -20,23 +30,119 @@ public class HookController {
 	/** our logger is log4j */
 	private static final Logger LOGGER = LoggerFactory.getLogger(HookController.class);
 	
+	/** pick value from application.yaml */
+	@Value("${spring.application.system.publickey}")
+	private String pubkey;
+	
+	@Value("${spring.application.system.customerId}")
+	private String customerId;
+	
+	@Value("${spring.application.system.systemId}")
+	private String systemId;
+	
+	private String[] copyProps = { MediaPoolEvent.PROP_CUSTOMERID, MediaPoolEvent.PROP_SYSTEMID, MediaPoolEvent.PROP_BASEURL };
 	
 	/**
 	 * <p>basic request validator method
 	 * <p>the rest endpoint is simply "/hook"
 	 * 
-	 * @param body the raw request body
+	 * @param body the pojo with the request body, @see {@link HookRequestBody}
 	 * 
 	 * @return Response object with detailed status and error code
 	 */
 	@PostMapping("/hook")
-	public Response validator(@RequestBody String body) {
+	public Response post(@RequestBody HookRequestBody requestBody, HttpServletResponse httpResponse) {
 		
-		LOGGER.info(body);
+		long start = System.currentTimeMillis();
+		Response response = null;
 		
-		Response response = new Response(body, 0);
+		try {
+			JSONObject eventObject = new JSONObject();
+			JSONArray responseArray = new JSONArray();
+			
+			LOGGER.debug(requestBody.toString(4));
+			
+			String eventData = requestBody.getData();
+			String signature = requestBody.getSignature();
+			
+			// ToDo: validate the data with the signature and the configured pub key
+			
+			
+			
+			/*
+			 * parse data property and parse the inner structure as JSON
+			 */
+			JSONObject dataObject = new JSONObject(eventData);
+			
+			/* this is the array of actual media pool events submitted in this request */
+			JSONArray eventArray = dataObject.getJSONArray("events");
+			LOGGER.debug("decoded data: " + dataObject.toString(4));
+			
+			/*
+			 * process event array
+			 */
+			for ( int n = 0; n < eventArray.length(); n++ )
+			{
+				// pick one event
+				eventObject = eventArray.getJSONObject(n);
+				
+				/*
+				 * these props need to go into each event element, as within the subsequent queue, 
+				 * there is no "batch" but single, disjoint events
+				 */
+				for ( String prop : copyProps ) {
+					if ( dataObject.has(prop) )
+						eventObject.put(prop, dataObject.getString(prop));
+				}
+				
+				/*
+				 * validate event data
+				 */
+				MediaPoolEvent mediapoolEvent = MediaPoolEvent.factory(eventObject);
+				
+				// check source system IDs of this event
+//				if ( mediapoolEvent.getCustomerId().equals(customerId) && mediapoolEvent.getSystemId().equals(systemId) ) 
+				{
+					/*
+					 * Push event to internal processing queue
+					 * We will not process this event within this loop!
+					 */
+					
+					LOGGER.info( (n+1) + ". Event " + mediapoolEvent.getEvent().toString() + " for Asset " + mediapoolEvent.getMediaPoolAssetId() );
+					
+				}
+//				else
+//					LOGGER.error("Event " + mediapoolEvent.getEvent().toString() 
+//							+ " ignored for customer " + mediapoolEvent.getCustomerId() + " on system " + mediapoolEvent.getSystemId() );
+				
+			}
+			
+			httpResponse.setStatus(HttpServletResponse.SC_ACCEPTED);
+			return new Response("accepted", HttpServletResponse.SC_ACCEPTED);
 		
-		return response;
+		}
+		catch (JSONException e)
+		{
+			LOGGER.error("A JSON error occured", e);
+			LOGGER.info("(1) Invalid MP Sync Request: " + requestBody );
+		}
+		catch (WebhookException e)
+		{
+			LOGGER.error("An error occured", e);
+			LOGGER.info("(2) Invalid MP Sync Request: " + requestBody );
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("A general error occured", e);
+			LOGGER.info("(4) Invalid MP Sync Request: " + requestBody );
+		}
+		finally
+		{
+			LOGGER.info("Finished processing webhook request  in " + (System.currentTimeMillis() - start) + " msec");
+		}
+
+		httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		return new Response("Invalid Request", HttpServletResponse.SC_BAD_REQUEST);
 	}
 	
 }
