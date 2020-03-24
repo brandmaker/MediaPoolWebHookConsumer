@@ -16,10 +16,12 @@ This repository contains a blue print for a webhook, which is capable of the fol
 * register for events like "PUBLISHED" or "DEPUBLISHED"
 * retrieve the POST message for the events
 * validate POST data
-* pull asset metadata from Media Pool via REST API
-* pull binary of requested version and rendition from REST API
-* store binary to local file system
-* store metadata as JSON to local file system
+* Add a job to an internal processing queue
+* Within the queue listener
+** pull asset metadata from Media Pool via REST API
+** pull binary of requested version and rendition from REST API
+** store binary to local file system
+** store metadata as JSON to local file system
 
 ## Prerequisits
 
@@ -36,6 +38,14 @@ https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_We
 According to the recommendations to not to process the events immediately within the hook itself, the structure of a basic consumer looks like
 
 ![Consumer Structure](./Media%20Poool%20Web-Hooks%20Consumer.png)
+
+The processing queue in the above flow chart will be implemented with the use of Spring JMS and ActiveMQ. In order to make this example as stand alone as possible, 
+we will use the embedded broker of ActiveMQ. Any available broker can be configured through the application.yaml file. The internally used broker wille be configured persistant.
+The queue topic can be configured within the application.yaml as well.
+
+On https://codenotfound.com/spring-jms-activemq-example.html  you will find further information on how to integrate Spring JMS and ActiveMQ. 
+
+The effective processing of the event (i.e. picking up meta data and binary from Media Pool via REST API etc.) takes place in the queue listener.
 
 ## Usage
 
