@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * <p>As the MediaPoolEvent Object gets added to the Event Job Queue, this Object msut be entirely serializable!
  * 
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @author axel.amthor
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MediaPoolEvent
 {
 
@@ -83,22 +86,6 @@ public class MediaPoolEvent
 	 * Mapping structure to call getters and setters based on property names
 	 */
 	private final AttributeActor<?, ?>[] REQUEST_ATTRIBUTES = {
-			new AttributeActor<Long, Long>(PROP_TENANTID, false) {
-
-				@Override
-				public void set(Long val)
-				{
-					if ( val != null )
-						setTenantId(val);
-				}
-
-				@Override
-				public Long get()
-				{
-					return getTenantId();
-				}
-
-			},
 			new AttributeActor<String, String>(PROP_CUSTOMERID) {
 
 				@Override
@@ -154,13 +141,13 @@ public class MediaPoolEvent
 				@Override
 				public void set(String val)
 				{
-					setMediaPoolAssetId(val);
+					setAssetId(val);
 				}
 
 				@Override
 				public String get()
 				{
-					return getMediaPoolAssetId();
+					return getAssetId();
 				}
 
 			},
@@ -243,16 +230,12 @@ public class MediaPoolEvent
 	private String systemId;
 	private String baseUrl;
 	private ArrayList<Integer>mediaPollAssetIds;
-	private String mediaPoolAssetId;
+	private String assetId;
 	private JSONArray payloadArray;
 	private MediaPoolWebHookEvents.Event event;
 	private GregorianCalendar eventTime;
 	private String signature;
-
-	private String webCacheAssetId;
-
-	private long tenantId;
-
+	
 	/**
 	 * Validates the request data and returns an event object if valid, otherwise null.
 	 * Error messages are put back into the request object as "error": "message..."
@@ -678,36 +661,18 @@ public boolean isPublishingEvent() {
 	/**
 	 * @return the mediaPoolAssetId
 	 */
-	public String getMediaPoolAssetId()
+	public String getAssetId()
 	{
-		return mediaPoolAssetId;
+		return assetId;
 	}
 
 	/**
 	 * @param mediaPoolAssetId the mediaPoolAssetId to set
 	 */
-	public void setMediaPoolAssetId(String mediaPoolAssetId)
+	public void setAssetId(String mediaPoolAssetId)
 	{
-		this.mediaPoolAssetId = mediaPoolAssetId;
+		this.assetId = mediaPoolAssetId;
 	}
-
-	/**
-	 * @return the webCacheAssetId
-	 */
-	public String getWebCacheAssetId()
-	{
-		return webCacheAssetId;
-	}
-
-	/**
-	 * @param webCacheAssetId the webCacheAssetId to set
-	 */
-	public void setWebCacheAssetId(String webCacheAssetId)
-	{
-		this.webCacheAssetId = webCacheAssetId;
-	}
-
-
 
 	/**
 	 * @return the signature
@@ -740,22 +705,5 @@ public boolean isPublishingEvent() {
 	{
 		this.user = user;
 	}
-
-	/**
-	 * @return the tenantId
-	 */
-	public long getTenantId()
-	{
-		return tenantId;
-	}
-
-	/**
-	 * @param tenantId the tenantId to set
-	 */
-	public void setTenantId(long tenantId)
-	{
-		this.tenantId = tenantId;
-	}
-
 
 }

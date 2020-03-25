@@ -22,7 +22,7 @@ import com.brandmaker.mediapool.webhook.rest.controller.HookController;
 @SpringBootApplication(exclude={SecurityAutoConfiguration.class})
 
 // our controller is in a sibling package, give Spring some hints where to find it
-@ComponentScan(basePackageClasses = HookController.class)
+@ComponentScan(basePackageClasses = HookController.class,basePackages={"com.brandmaker.mediapool.queue"})
 
 public class Application {
 
