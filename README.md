@@ -18,10 +18,10 @@ This repository contains a blue print for a webhook, which is capable of the fol
 * validate POST data
 * Add a job to an internal processing queue
 * Within the queue listener
-** pull asset metadata from Media Pool via REST API
-** pull binary of requested version and rendition from REST API
-** store binary to local file system
-** store metadata as JSON to local file system
+	* pull asset metadata from Media Pool via REST API
+	* pull binary of requested version and rendition from REST API
+	* store binary to local file system
+	* store metadata as JSON to local file system
 
 ## Prerequisits
 
