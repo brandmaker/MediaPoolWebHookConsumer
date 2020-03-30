@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -15,8 +16,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.brandmaker.mediapool.MediaPoolWebHookEvents;
 
 /**
  * <p>As the MediaPoolEvent Object gets added to the Event Job Queue, this Object msut be entirely serializable!
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author axel.amthor
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class MediaPoolEvent
 {
 
@@ -48,8 +47,7 @@ public class MediaPoolEvent
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaPoolEvent.class);
 
-	@Value("#{'${spring.application.system.channels}'.split(',')}")
-	private static final ArrayList<String> mySyncChannels = null;
+	private List<String> mySyncChannels;
 	
 	/**
 	 * Inner class which maps property values to class variables
@@ -525,8 +523,14 @@ public boolean isPublishingEvent() {
 		}
 	}
 	
+	public List<String>getMySyncChannels() {
+		return mySyncChannels;
+	}
 	/**
-	 * Is this a WebCache Channel Event?
+	 *	<p>Is the current event related to one of the channels we are working for?
+	 * 	<p>The channels we are listening on are configured in the application.yaml
+	 * 
+	 *  @see application.yaml
 	 * 
 	 * @return
 	 */
@@ -548,10 +552,10 @@ public boolean isPublishingEvent() {
 				JSONObject channelData = payloadArray.getJSONObject(n);
 				if ( channelData.has(PROP_CHANNELID) && channelData.has(PROP_RENDERINGSCHEME) ) {
 					if ( channelData.getString(PROP_CHANNELID).equals(CHANNEL_PUBLIC_LINKS))
-						return channelData.getString(PROP_RENDERINGSCHEME);
+						return ""+channelData.getLong(PROP_RENDERINGSCHEME);
 					
 					if ( channelData.getString(PROP_CHANNELID).equals(CHANNEL_SHARE))
-						return channelData.getString(PROP_RENDERINGSCHEME);
+						return ""+channelData.getLong(PROP_RENDERINGSCHEME);
 								
 				}
 			}
@@ -704,6 +708,10 @@ public boolean isPublishingEvent() {
 	public void setUser(String user)
 	{
 		this.user = user;
+	}
+
+	public void setMySyncChannels(List<String> mySyncChannels) {
+		this.mySyncChannels = mySyncChannels;
 	}
 
 }

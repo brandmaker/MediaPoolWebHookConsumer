@@ -25,6 +25,18 @@ This repository contains a blue print for a webhook, which is capable of the fol
 
 ## Prerequisits
 
+### Environment
+
+* Java >= 8
+* Spring https://spring.io/
+* ActivMQ https://activemq.apache.org/
+* Eclipse / IntelliJ
+* Maven 
+* Github
+* Travis-CI https://travis-ci.org/getting_started
+
+### BrandMaker Media Pool
+
 Please make yousrself familiar with the basic principles of Webhooks. There are two comprehensive and recommended introductions available here:
 
 * https://requestbin.com/blog/working-with-webhooks/
@@ -40,8 +52,8 @@ According to the recommendations to not to process the events immediately within
 ![Consumer Structure](./Media%20Poool%20Web-Hooks%20Consumer.png)
 
 The processing queue in the above flow chart will be implemented with the use of Spring JMS and ActiveMQ. In order to make this example as stand alone as possible, 
-we will use the embedded broker of ActiveMQ. Any available broker can be configured through the application.yaml file. The internally used broker wille be configured persistant.
-The queue topic can be configured within the application.yaml as well.
+we will use the embedded broker of ActiveMQ. Any available broker can be configured through the `application.yaml` file. The internally used broker wille be configured persistant.
+The queue topic can be configured within the `application.yaml` as well.
 
 On https://codenotfound.com/spring-jms-activemq-example.html  you will find further information on how to integrate Spring JMS and ActiveMQ. 
 
@@ -50,18 +62,20 @@ The effective processing of the event (i.e. picking up meta data and binary from
 ## Usage
 
 ### Build
-- TBD
+
+Within the root directory of your project, run `mvnw clean package` and `mvnw javadoc:javadoc`
 
 ### Test
 
-In order to test your Media Pool Webhook, open a CLI in the parent of your target directory within your project and start springboot with
+In order to test your Media Pool Webhook, open a CLI in the root directory of your project and start springboot with
 
 ```
 java -Dserver.address=0.0.0.0 -jar target\webhook.consumer-0.0.1-SNAPSHOT.jar
 ```
 
-### Deploy
-- TBD
+Access to the Webhook: POST to http://localhost:8080/hook
+
+Api Documentation and test client generated with open-api and swagger-ui: http://localhost:8080/api-docs.html
 
 ## Project state
 

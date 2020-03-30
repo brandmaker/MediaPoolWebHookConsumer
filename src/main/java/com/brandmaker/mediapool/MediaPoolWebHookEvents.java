@@ -1,8 +1,10 @@
-package com.brandmaker.mediapool.webhook;
+package com.brandmaker.mediapool;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.brandmaker.mediapool.webhook.WebhookException;
 
 /**
  * Wrapper class to encapsulate all possible Media Pool webhook events
@@ -155,16 +157,16 @@ public class MediaPoolWebHookEvents
 
 	}
 
-	static Event theEvent(String val) throws WebhookException {
-		   try
-		   {
-			   return Event.valueOf(val);
-		   }
-		   catch ( Exception e)
-		   {
-			   LOGGER.info("Unknown Event Type: " + val);
-			   throw new WebhookException("Unknown Event Type: " + val);
-		   }
+	public static Event theEvent(String val) throws WebhookException {
+	   try
+	   {
+		   return Event.valueOf(val);
 	   }
+	   catch ( Exception e)
+	   {
+		   LOGGER.info("Unknown Event Type: " + val);
+		   throw new WebhookException("Unknown Event Type: " + val);
+	   }
+   }
 
 }

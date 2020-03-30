@@ -2,6 +2,8 @@ package com.brandmaker.mediapool.webhook.rest.controller;
 
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +49,7 @@ public class HookController {
 	private String systemId;
 	
 	@Autowired
-	private Sender sender;
+	private Sender processingQueueSender;
 	
 	private String[] copyProps = { MediaPoolEvent.PROP_CUSTOMERID, MediaPoolEvent.PROP_SYSTEMID, MediaPoolEvent.PROP_BASEURL };
 	
@@ -63,11 +65,9 @@ public class HookController {
 	public Response post(@RequestBody HookRequestBody requestBody, HttpServletResponse httpResponse) {
 		
 		long start = System.currentTimeMillis();
-		Response response = null;
 		
 		try {
 			JSONObject eventObject = new JSONObject();
-			JSONArray responseArray = new JSONArray();
 			
 			LOGGER.debug(requestBody.toString(4));
 			
@@ -85,7 +85,7 @@ public class HookController {
 			
 			/* this is the array of actual media pool events submitted in this request */
 			JSONArray eventArray = dataObject.getJSONArray("events");
-			LOGGER.debug("decoded data: " + dataObject.toString(4));
+			LOGGER.info("decoded event data: " + dataObject.toString(4));
 			
 			/*
 			 * process event array
@@ -121,13 +121,14 @@ public class HookController {
 					 * 
 					 */
 					
-					// serialize the event object to a json string
-					String serializedEvent = new ObjectMapper().writeValueAsString(mediapoolEvent);
+					// serialize the event object to a map
+					Map<String, Object> map = mediapoolEvent.toMap();
 					
 					// send this serialized event to media pool processing queue
-					sender.send(serializedEvent);
+					processingQueueSender.send(map);
 					
 					LOGGER.info( (n+1) + ". Event " + mediapoolEvent.getEvent().toString() + " for Asset " + mediapoolEvent.getAssetId() + " queued." );
+				
 				}
 //				else
 //					LOGGER.error("Event " + mediapoolEvent.getEvent().toString() 
@@ -135,7 +136,19 @@ public class HookController {
 				
 			}
 			
-			// now we are done here and will send back the response to the requester
+			/*
+			 * now we are done here and will send back the response to the requester
+			 * 
+			 * Media Pool is not interested on HOW we are processing he event itself nor whether this
+			 * processing might fail. It wants us to tell whether we have successfully RECEIVED the event.
+			 * 
+			 * So the response over here is always "202 accepted" as we process the event later and asynchronously.
+			 * 
+			 * If too many consecutive errors are returned to Media Pool, the webhook will be disabled 
+			 * and no further events will be recieved any more"
+			 * 
+			 * 
+			 */
 			httpResponse.setStatus(HttpServletResponse.SC_ACCEPTED);
 			return new Response("accepted", HttpServletResponse.SC_ACCEPTED);
 			

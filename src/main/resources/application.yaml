@@ -2,7 +2,7 @@
 #
 # Application settings for Demo Web Hook 
 #
-# (c) BardnMaker GmbH, 2020
+# (c) BardnMaker GmbH, March 2020
 #
 ##
  
@@ -23,7 +23,12 @@ spring:
               
               # The channel or the channels, this webhook is responsible for. We take the standard here
               # please refer to the documentation of publication channels in the media pool manual!
-              channels: PUBLIC_LINKS, SHARE
+              channels: PUBLIC_LINKS,SHARE
+              
+              # cleartext uid and pwd to login via Basic Auth to Media Pool API
+              # as soon as the CAS is available, this is changed to an oAuth2 access Token and refresh Token !!
+              user: axel.amthor
+              password: rnmthr1.
           
      server:
           port: 8080
@@ -36,5 +41,9 @@ spring:
           
      active-mq:
           queue-name: mediapool.queue
-          broker-url: tcp://localhost:61616
+          broker-url: tcp://localhost:61616 # this requires ActiveMQ to be up and running!
           #broker-url: vm://embedded-broker?broker.persistent=true
+          
+springdoc:
+     swagger-ui:
+          path: /api-docs.html
