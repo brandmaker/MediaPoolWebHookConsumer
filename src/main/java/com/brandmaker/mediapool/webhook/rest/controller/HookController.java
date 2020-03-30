@@ -1,10 +1,6 @@
 package com.brandmaker.mediapool.webhook.rest.controller;
 
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,17 +8,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.brandmaker.mediapool.queue.QueueConsumer;
 import com.brandmaker.mediapool.queue.Sender;
 import com.brandmaker.mediapool.webhook.MediaPoolEvent;
 import com.brandmaker.mediapool.webhook.WebhookException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.Contact;
 
 /**
  * <p>Hook controller
@@ -32,6 +31,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author axel.amthor
  *
  */
+@OpenAPIDefinition(
+		info = @Info(
+				title="BrandMaker Media Pool Webhook Example",
+				version="1.0",
+				description="Example implementation of a web hook REST Endpoint, listening for events submitted from a Media Pool instance",
+				contact=@Contact(name="BrandMaker Gmbh, Karlsruhe, http://www.brandmaker.com", email="info@brandmaker.com")
+		)
+	)
 @RestController
 public class HookController {
 
