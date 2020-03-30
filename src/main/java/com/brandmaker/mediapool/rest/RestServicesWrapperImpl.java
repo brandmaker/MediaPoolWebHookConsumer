@@ -649,33 +649,6 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 	}
 
 	/**
-	 * Gets the cookie.
-	 * @param url the url
-	 * @return the cookie
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException the uRI syntax exception
-	 */
-	public static String getCookie(URL url) throws IOException, URISyntaxException
-	{
-		String cookieValue = null;
-		CookieHandler handler = CookieHandler.getDefault();
-		if (handler != null)
-		{
-			Map<String, List<String>> headers = handler.get(url.toURI(), new HashMap<String, List<String>>());
-			List<String> values = headers.get("Cookie");
-			for (Iterator<String> iter = values.iterator(); iter.hasNext();)
-			{
-				String v = iter.next();
-				if (cookieValue == null)
-					cookieValue = v;
-				else
-					cookieValue = cookieValue + ";" + v;
-			}
-		}
-		return cookieValue;
-	}
-
-	/**
 	 * @return the searchIdRequestBody
 	 */
 	private JSONObject getSearchIdRequestBody(String assetId)
