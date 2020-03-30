@@ -29,7 +29,7 @@ import com.brandmaker.mediapool.webhook.rest.controller.HookController;
 		"com.brandmaker.mediapool.rest" })
 public class Application extends SpringBootServletInitializer {
 
-	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HookController.class);
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
 	public static void main(String[] args) {
 

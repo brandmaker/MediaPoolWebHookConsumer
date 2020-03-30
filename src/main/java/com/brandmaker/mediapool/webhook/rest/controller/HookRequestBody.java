@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class HookRequestBody {
 
-	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HookController.class);
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HookRequestBody.class);
 
 	private String data;
 	private String signature;
