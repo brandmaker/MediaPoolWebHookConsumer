@@ -13,15 +13,15 @@ the according information from the MediaPool API.
 
 This repository contains a blue print for a webhook, which is capable of the following:
 
-* (/) register for events like "PUBLISHED" or "DEPUBLISHED"
-* retrieve the POST message for the events
-* validate POST data
-* Add a job to an internal processing queue
-* Within the queue listener
-	* pull asset metadata from Media Pool via REST API
-	* pull binary of requested version and rendition from REST API
-	* store binary to local file system
-	* store metadata as JSON to local file system
+* :heavy_check_mark: register for events like "PUBLISHED" or "DEPUBLISHED"
+* :heavy_check_mark: retrieve the POST message for the events
+* :heavy_check_mark: validate POST data
+* :heavy_check_mark: Add a job to an internal processing queue
+* :heavy_check_mark: Within the queue listener
+	* :heavy_check_mark: pull asset metadata from Media Pool via REST API
+	* :heavy_check_mark: pull binary of requested version and rendition from REST API
+	* :x: store binary to local file system
+	* :x: store metadata as JSON to local file system
 
 ## Prerequisits
 
