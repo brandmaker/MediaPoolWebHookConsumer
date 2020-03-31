@@ -13,7 +13,7 @@ the according information from the MediaPool API.
 
 This repository contains a blue print for a webhook, which is capable of the following:
 
-* register for events like "PUBLISHED" or "DEPUBLISHED"
+* (/) register for events like "PUBLISHED" or "DEPUBLISHED"
 * retrieve the POST message for the events
 * validate POST data
 * Add a job to an internal processing queue
