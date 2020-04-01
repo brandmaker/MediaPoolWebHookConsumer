@@ -27,8 +27,12 @@ spring:
               
               # cleartext uid and pwd to login via Basic Auth to Media Pool API
               # as soon as the CAS is available, this is changed to an oAuth2 access Token and refresh Token !!
-              user: axel.amthor
-              password: rnmthr1.
+              user: YOUR_MP_USERNAME
+              password: YOUR_MP_PASSWD
+              
+              
+              # base path to store the files in. "./" means current dir where the app is started. Path must contain a trailing slash ("/"). Path sep is always forward slash ("/")
+              basepath: ./assets/
           
      server:
           port: 8080

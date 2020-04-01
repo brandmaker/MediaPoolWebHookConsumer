@@ -26,6 +26,9 @@ public class MediaPoolAssetManager {
 	@Autowired
 	RestServicesWrapper restService;
 	
+	@Autowired
+	FileManagerService fileManagerService;
+	
 	/**
 	 * Synchronize the local file copy of the asset
 	 * @param event
@@ -107,8 +110,11 @@ public class MediaPoolAssetManager {
 					if ( mpAsset != null && mpAsset.isStateReady() ) {
 						
 						// stoe Meta Data
+						fileManagerService.storeMetadata(mpAsset);
 						
 						// store Binary Data
+						fileManagerService.storeBinarydata(mpAsset);
+						
 					}
 					break;
 	
@@ -116,6 +122,7 @@ public class MediaPoolAssetManager {
 					if ( event.isMyChannel() && mpAsset != null && mpAsset.isStateReady() ) {
 					
 						// store Meta Data
+						fileManagerService.storeMetadata(mpAsset);
 					}
 					break;
 					
@@ -125,6 +132,8 @@ public class MediaPoolAssetManager {
 					if ( event.isMyChannel() ) {
 						
 						// delete the file(s)
+						fileManagerService.deleteFiles(event);
+						
 					}
 					break;
 	
@@ -133,6 +142,8 @@ public class MediaPoolAssetManager {
 					if ( mpAsset != null && mpAsset.isStateReady() ) {
 	
 						// store Binary Data
+						fileManagerService.storeBinarydata(mpAsset);
+						fileManagerService.deleteFiles(event);
 					}
 					break;
 	
@@ -141,6 +152,8 @@ public class MediaPoolAssetManager {
 					if ( mpAsset != null && mpAsset.isStateReady() ) {
 						
 						// delete the file(s)
+						fileManagerService.deleteFiles(event);
+						
 					}
 					break;
 	
@@ -148,6 +161,7 @@ public class MediaPoolAssetManager {
 				case ASSET_REMOVED:
 						
 					// delete the file(s)
+					fileManagerService.deleteFiles(event);
 					
 					break;
 	
@@ -155,6 +169,8 @@ public class MediaPoolAssetManager {
 					if ( mpAsset != null && mpAsset.isStateReady() ) {
 					
 						// delete the file(s)
+						fileManagerService.deleteFiles(event);
+						
 					}
 					break;
 	

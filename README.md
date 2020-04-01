@@ -20,8 +20,8 @@ This repository contains a blue print for a webhook, which is capable of the fol
 * :heavy_check_mark: Within the queue listener
 	* :heavy_check_mark: pull asset metadata from Media Pool via REST API
 	* :heavy_check_mark: pull binary of requested version and rendition from REST API
-	* :x: store binary to local file system
-	* :x: store metadata as JSON to local file system
+	* :heavy_check_mark: store binary to local file system
+	* :heavy_check_mark: store metadata as JSON to local file system
 
 ## Prerequisits
 

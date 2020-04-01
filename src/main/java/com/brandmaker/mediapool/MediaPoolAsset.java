@@ -869,6 +869,7 @@ public class MediaPoolAsset
 				
 				this.setSuffix(suffix);
 				this.setMimeType(mimeType);
+				this.setFilename(filename);
 				
 				dataInputStream = restService.getDataInputStream(conn);
 				
@@ -1254,5 +1255,9 @@ public class MediaPoolAsset
 
 	public void setvdbNames(Hashtable<String, String> vdbNames) {
 		this.vdbNames = vdbNames;
+	}
+
+	public MediaPoolEvent getMediaPoolEvent() {
+		return mediaPoolEvent;
 	}
 }

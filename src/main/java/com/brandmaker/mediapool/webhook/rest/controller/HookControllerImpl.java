@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.brandmaker.mediapool.queue.Sender;
 import com.brandmaker.mediapool.webhook.MediaPoolEvent;
-import com.brandmaker.mediapool.webhook.WebhookException;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;

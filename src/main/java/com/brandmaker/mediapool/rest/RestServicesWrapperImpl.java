@@ -474,8 +474,13 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 			{
 				JSONObject metaObject = new JSONObject(data);
 
-				if ( metaObject.getLong("totalHits") != 1 ) {
-					LOGGER.error("Ambigous or empty result " + metaObject.getLong("totalHits"));
+				if ( metaObject.getLong("totalHits") == 0 ) {
+					LOGGER.error("Asset not found by ID {}: " + metaObject.getLong("totalHits"), event.getAssetId());
+					return null;
+				}
+				
+				if ( metaObject.getLong("totalHits") > 1 ) {
+					LOGGER.error("Ambigous result for ID {}: " + metaObject.getLong("totalHits"), event.getAssetId());
 					return null;
 				}
 

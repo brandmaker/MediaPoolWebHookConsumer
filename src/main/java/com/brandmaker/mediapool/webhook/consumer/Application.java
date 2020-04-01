@@ -31,13 +31,20 @@ public class Application extends SpringBootServletInitializer {
 
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
+	/**
+	 * SpringBoot Starter Application
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
-		LOGGER.info("Here we go");
-
+		LOGGER.info("Start of Media Pool Webhook Consumer");
+		
 		SpringApplication.run(Application.class, args);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.springframework.boot.web.servlet.support.SpringBootServletInitializer#configure(org.springframework.boot.builder.SpringApplicationBuilder)
+	 */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(Application.class);
