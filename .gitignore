@@ -31,3 +31,4 @@ build/
 .vscode/
 /activemq-data/
 /cookies.ser
+/assets/
