@@ -19,9 +19,6 @@ import com.brandmaker.mediapool.webhook.WebhookException;
  *
  * @author axel.amthor
  *
- */
-/**
- * @author axel.amthor
  *
  */
 public interface RestServicesWrapper

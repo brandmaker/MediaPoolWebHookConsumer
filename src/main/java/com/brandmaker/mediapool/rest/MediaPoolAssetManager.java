@@ -143,7 +143,7 @@ public class MediaPoolAssetManager {
 	
 						// store Binary Data
 						fileManagerService.storeBinarydata(mpAsset);
-						fileManagerService.deleteFiles(event);
+						fileManagerService.storeMetadata(mpAsset);
 					}
 					break;
 	

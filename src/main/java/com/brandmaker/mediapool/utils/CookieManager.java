@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * CookieManager is a simple utilty for handling cookies when working with
  * java.net.URL and java.net.URLConnection objects.
  *
- * Cookies are backed up in a persistent store, wenever new cookies are stored
+ * Cookies are backed up in a persistent store, whenever new cookies are stored
  * Instantiation will read in the cookie store from file again
  *
  * Multiple instantiation should be prevented, allthough, the store is static.

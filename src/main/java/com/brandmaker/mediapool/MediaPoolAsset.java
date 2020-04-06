@@ -865,6 +865,12 @@ public class MediaPoolAsset
 				String suffix = FilenameUtils.getExtension(filename);
 				filename = FilenameUtils.getBaseName(filename);
 				
+				/*
+				 * see MPO-5068 ... ??
+				 */
+				if ( filename.matches("^media[0-9]+$") )
+					filename = this.getFilename();
+				
 				LOGGER.info("Content-Disposition: " + filename + " : " + suffix + " : " + mimeType);
 				
 				this.setSuffix(suffix);

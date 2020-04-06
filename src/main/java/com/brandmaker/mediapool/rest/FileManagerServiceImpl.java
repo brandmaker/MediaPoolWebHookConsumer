@@ -37,16 +37,27 @@ public class FileManagerServiceImpl implements FileManagerService {
 	@Override
 	public void storeMetadata(MediaPoolAsset mpAsset) {
 		File path = getOrCreateTargetFolder(mpAsset.getMediaPoolEvent());
+		FileOutputStream outputStream =  null;
 		
 		File metadata = new File(path, "metadata.json");
 		try {
-			FileOutputStream outputStream = new FileOutputStream(metadata);
+			outputStream = new FileOutputStream(metadata);
 		    byte[] bytes = mpAsset.toJson().toString(4).getBytes();
 		    outputStream.write(bytes);
-		    outputStream.close();
 		}
 		catch ( Exception e ) {
 			LOGGER.error("Error on writing meta data", e);
+		}
+		finally {
+			
+			try {
+				if ( outputStream != null )
+					outputStream.close();
+			}
+			catch ( Exception e ) {
+				LOGGER.error("Error on closing streams", e);
+			}
+			
 		}
 	}
 
