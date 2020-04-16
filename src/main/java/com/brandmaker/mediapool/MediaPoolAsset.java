@@ -194,6 +194,7 @@ public class MediaPoolAsset
 		{
 			Hashtable<String, String>langvals = new Hashtable<String, String>();
 
+			@SuppressWarnings("unchecked")
 			Iterator<String> props = value.keys();
 			while ( props.hasNext() ) {
 				String prop = props.next();

@@ -71,7 +71,7 @@ public class MediaPoolAssetManager {
 						LOGGER.info("File updated" );
 					}
 					else {
-						LOGGER.info("could not load asset " + event.getAssetId() );
+						LOGGER.error("could not load asset " + (event.getAssetId() != null ? event.getAssetId() : "due to missing asset ID"));
 					}
 					break;
 			}

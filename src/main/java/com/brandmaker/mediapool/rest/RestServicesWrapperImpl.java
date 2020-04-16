@@ -421,6 +421,12 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 		HttpURLConnection mdconn = null;
 		try
 		{
+			if ( event.getAssetId() == null ) {
+				// sometimes the MP doesn't provide the array of asset IDs in the sync event.
+				// this is a bug in older builds, which we are catching here
+				LOGGER.error("Asset ID missing!");
+				return null;
+			}
 
 			String restSearchUrl = event.getBaseUrl() + "/rest/mp/v1.1/search";
 
