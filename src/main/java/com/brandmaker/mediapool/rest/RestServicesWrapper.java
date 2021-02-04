@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 
 import org.json.JSONObject;
-import org.springframework.context.annotation.Bean;
 
 import com.brandmaker.mediapool.MediaPoolAsset;
 import com.brandmaker.mediapool.webhook.MediaPoolEvent;
