@@ -144,20 +144,28 @@ public class HookControllerImpl implements HookController{
 //				if ( mediapoolEvent.getCustomerId().equals(customerId) && mediapoolEvent.getSystemId().equals(systemId) ) 
 				{
 					/*
-					 * Push event to the processing queue
-					 * We will not process this event within this loop!
-					 * 
-					 * We are using spring JMS together with ActiveMQ as a broker. Configuration can be done via the application.yaml
-					 * 
+					 * check for the proper channel. If this is not the case, we do not need to enqueue the event at all!
 					 */
-					
-					// serialize the event object to a map
-					Map<String, Object> map = mediapoolEvent.toMap();
-					
-					// send this serialized event to media pool processing queue
-					processingQueueSender.send(map);
-					
-					LOGGER.info( (n+1) + ". Event " + mediapoolEvent.getEvent().toString() + " for Asset " + mediapoolEvent.getAssetId() + " queued." );
+					if ( mediapoolEvent.isMyChannel() )
+					{
+						/*
+						 * Push event to the processing queue
+						 * We will not process this event within this loop!
+						 * 
+						 * We are using spring JMS together with ActiveMQ as a broker. Configuration can be done via the application.yaml
+						 * 
+						 */
+						
+						// serialize the event object to a map
+						Map<String, Object> map = mediapoolEvent.toMap();
+						
+						// send this serialized event to media pool processing queue
+						processingQueueSender.send(map);
+						
+						LOGGER.info( (n+1) + ". Event " + mediapoolEvent.getEvent().toString() + " for Asset " + mediapoolEvent.getAssetId() + " queued." );
+					}
+					else
+						LOGGER.info("Not my business: " + mediapoolEvent.getChannelsFromPayload().toString() );
 				
 				}
 //				else
