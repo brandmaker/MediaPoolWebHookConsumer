@@ -1,6 +1,7 @@
 /**
  * <h2>Media Pool Webhook Example Consumer</h2>
  *
+ *
  * <p>The software is protected by copyright laws and international copyright agreements,
  * as well as other intellectual property laws and agreements. 
  * The use of the software is done at your own risk. The manufacturer and developer accepts no
