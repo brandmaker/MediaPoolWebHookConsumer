@@ -360,9 +360,10 @@ public interface RestServicesWrapper
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 * @throws InterruptedException
+	 * @throws WebhookException 
 	 */
 	
-	HttpURLConnection pollDownloadTask(String downloadUrl) throws MalformedURLException, IOException, InterruptedException;
+	HttpURLConnection pollDownloadTask(String downloadUrl) throws MalformedURLException, IOException, InterruptedException, WebhookException;
 
 	/**
 	 * get the input stream from an HTTP conection

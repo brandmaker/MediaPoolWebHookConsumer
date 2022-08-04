@@ -27,8 +27,14 @@ spring:
               
               # cleartext uid and pwd to login via Basic Auth to Media Pool API
               # as soon as the CAS is available, this is changed to an oAuth2 access Token and refresh Token !!
-              user: axel.amthor
-              password: rnmthr1.
+              
+              # uncomment if authentication should be done via CAS / oAuth2
+              # if present and file exists and is proper, password and user are ignored!
+              oAauth2CredentialsFile: oauth-credentials.json
+
+              # uncomment if authentication should be done via Basic Auth (insecure!)
+#              user: axel.amthor
+#              password: rnmthr1.
               
               
               # base path to store the files in. "./" means current dir where the app is started. 

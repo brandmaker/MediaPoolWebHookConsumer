@@ -1,5 +1,6 @@
 package com.brandmaker.mediapool.webhook.rest.controller;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +51,10 @@ public class HookControllerImpl implements HookController{
 	
 	@Value("${spring.application.system.systemId}")
 	private String systemId;
+	
+	/** Configured list of channels which we want to manage */
+	@Value("#{'${spring.application.system.channels:}'.split(',')}")
+	private ArrayList<String> mySyncChannels;
 	
 	@Autowired
 	private Sender processingQueueSender;
@@ -143,6 +148,8 @@ public class HookControllerImpl implements HookController{
 				// if you want to listen for a particular instance and custoomer ID, uncomment the following and the `else` branch below
 //				if ( mediapoolEvent.getCustomerId().equals(customerId) && mediapoolEvent.getSystemId().equals(systemId) ) 
 				{
+					mediapoolEvent.setMySyncChannels(mySyncChannels);
+					
 					/*
 					 * check for the proper channel. If this is not the case, we do not need to enqueue the event at all!
 					 */

@@ -1,14 +1,26 @@
 package com.brandmaker.mediapool.rest;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.TimeZone;
+
+import javax.ws.rs.core.MediaType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,8 +31,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.brandmaker.mediapool.MediaPoolAsset;
 import com.brandmaker.mediapool.utils.HttpConnectionHandler;
+import com.brandmaker.mediapool.utils.OauthCredentials;
 import com.brandmaker.mediapool.webhook.MediaPoolEvent;
 import com.brandmaker.mediapool.webhook.WebhookException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -35,6 +49,8 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestServicesWrapper.class);
 
 	private static final String MEDIAID_TPL = "{MEDIAID}";
+	
+	private static final long YEAR_MILLISECONDS = 365L*24L*60L*60L*1000L;
 
 	/**
 	 * Request Body to retrieve an asset by it's ID and all necessary attributes from the REST search API.
@@ -217,12 +233,16 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 			"}";
 
 	/** the media pool user from the application.yaml */
-	@Value("${spring.application.system.user}")
-	private String user;
+	@Value("${spring.application.system.user:#{null}}")
+	private Optional<String> user;
 	
 	/** the media pool password from the application.yaml */
-	@Value("${spring.application.system.password}")
-	private String password;
+	@Value("${spring.application.system.password:#{null}}")
+	private Optional<String> password;
+	
+	/** the oAuth2credentials file path from the application.yaml */
+	@Value("${spring.application.system.oAauth2CredentialsFile:#{null}}")
+	private Optional<String> oauthCredentialsFile;
 	
 	/* (non-Javadoc)
 	 * @see com.brandmaker.webcache.core.asset.services.mediapool.RestServicesWrapper#createDownloadTask(java.lang.String, org.apache.sling.commons.json.JSONObject, com.brandmaker.webcache.core.tenant.WebCacheTenant)
@@ -242,7 +262,7 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 			handleCookies(downloadUrl, vconn);
 			cmgr.setCookies(vconn);
 	
-			vconn.setRequestProperty("Authorization", "Basic " + getBasicAuthenticationEncoding() );
+			vconn.setRequestProperty("Authorization", getAuthentication() );
 			vconn.setRequestProperty("Content-Type", "application/json");
 			
 			String rqBody = taskRequest.toString(4);
@@ -437,7 +457,7 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 			handleCookies(restSearchUrl, mdconn);
 			cmgr.setCookies(mdconn);
 
-			mdconn.setRequestProperty("Authorization", "Basic " + getBasicAuthenticationEncoding() );
+			mdconn.setRequestProperty("Authorization", getAuthentication() );
 			mdconn.setRequestProperty("Content-Type", "application/json");
 
 			JSONObject requestObject = this.getSearchIdRequestBody(event.getAssetId());
@@ -518,14 +538,252 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 		}
 	}
 
-	private String getBasicAuthenticationEncoding() {
+	/**
+	 * Get the Authentication Header content. This is either "Basic" or "Bearer", according to the settings in the application.yaml
+	 * 
+	 * @see /src/main/resources/application.yaml 
+	 * 
+	 * @return
+	 * @throws WebhookException
+	 */
+	private String getAuthentication() throws WebhookException {
 
-		String userPassword = user + ":" + password;
-		LOGGER.debug("Credentials: " + userPassword);
-        
-        return new String(Base64.getEncoder().encode(userPassword.getBytes()));
-
+		
+		String auth = null;
+		OauthCredentials credentials = getOAuthCredentials();
+		if ( credentials != null ) {
+			
+			
+			/*
+			 * Let's check whether we have tokens, then let's use those:
+			 */
+			String accessToken = credentials.getAccessToken().getToken();
+			String refreshToken = credentials.getRefreshToken().getToken();
+			
+			GregorianCalendar refreshExpires = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+			refreshExpires.setTime( credentials.getRefreshToken().getExpires() );
+			
+			GregorianCalendar accessExpires = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+			accessExpires.setTime( credentials.getAccessToken().getExpires() );
+			
+			
+			if ( accessToken != null && refreshToken != null ) {
+				
+				GregorianCalendar calNow = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+				calNow.add(Calendar.SECOND, -10); // 10 seconds before effective expiration
+				
+				LOGGER.debug("Access token expires on " + toGMTString(accessExpires));
+				LOGGER.debug("Refresh token expires on " + toGMTString(refreshExpires));
+				LOGGER.debug("Now " + toGMTString(calNow));
+				
+				if ( calNow.after(accessExpires) ) {
+					
+					/*
+					 * access token is expired, retrieve a new one
+					 */
+					LOGGER.info("Access token expired on " + toGMTString(accessExpires));
+					
+					if ( calNow.after(refreshExpires) ) {
+						// refresh expired, we cannot login anymore
+						LOGGER.error("Refresh token (also) expired on " + toGMTString(refreshExpires));
+						throw new WebhookException("All tokens expired");
+					}
+					else
+					{
+						try {
+							
+							accessToken = refreshAndPresistTokens(credentials, accessToken, refreshExpires, accessExpires);
+								
+						} catch ( Exception e ) {
+							LOGGER.error("Error refreshing tokens: " + e);
+							throw new WebhookException("Error refreshing tokens");
+						}
+					}
+				}
+				
+				auth = new String("Bearer " + accessToken );
+			}
+		}
+		else {
+			auth = getBasicAuth();
+		}
+		
+		LOGGER.debug("Auth: " + auth);
+		return auth;
+		
     }
+
+
+	/**
+	 * Refresh all of the tokens and persist them in the credentials file given in the application settings
+	 * 
+	 * @param credentials
+	 * @param accessToken
+	 * @param refreshExpires
+	 * @param accessExpires
+	 * 
+	 * @return the newly generated access token which can be used in subsequent calls
+	 * 
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	private String refreshAndPresistTokens(OauthCredentials credentials, String accessToken, GregorianCalendar refreshExpires, GregorianCalendar accessExpires)
+			throws MalformedURLException, IOException, JSONException {
+		
+		String refreshToken;
+		LOGGER.info("Refreshing tokens");
+		
+		// get the current time in order to later (!) calculate the expiration timestamp. 
+		// if we do it after the POST call, we might have some glitches of a few seconds ...
+		long tNow = System.currentTimeMillis();
+		
+		JSONObject refreshedTokensObject = refreshTokensFromCAS(credentials);
+		
+		if ( refreshedTokensObject != null ) {
+					
+			// store back these tokens !!!
+			
+			accessToken = refreshedTokensObject.getString("access_token");
+			long expires = ( refreshedTokensObject.getLong("expires_in")*1000L ) + tNow;
+			accessExpires.setTimeInMillis(expires);
+			
+			credentials.getAccessToken().setToken(accessToken);
+			credentials.getAccessToken().setExpires(accessExpires.getTime());
+			
+			refreshToken = refreshedTokensObject.getString("refresh_token");
+			refreshExpires.setTimeInMillis( YEAR_MILLISECONDS + tNow); // 365d is standard CAS
+			
+			credentials.getRefreshToken().setToken(refreshToken);
+			credentials.getRefreshToken().setExpires(refreshExpires.getTime());
+			
+			LOGGER.info("Persisting new tokens");
+			storeOAuthCredentials(credentials);
+		}
+		return accessToken;
+	}
+	
+	/**
+	 * Send a token refresh request to CAS with the given credentials etc.
+	 * 
+	 * @param refreshUrl
+	 * @param postDataBytes
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 */
+	public JSONObject refreshTokensFromCAS(OauthCredentials credentials) throws MalformedURLException, IOException {
+		
+		// retrieve new tokens from CAS (!!)
+		String clientId = credentials.getClientId();
+		String refreshUrl = credentials.getServer();
+		String grant_type = "refresh_token";
+		
+		HashMap <String, String>postData = new HashMap<>();
+		postData.put("client_id", clientId);
+		postData.put("client_secret", credentials.getClientSecret());
+		postData.put("grant_type", grant_type);
+		postData.put("refresh_token", credentials.getRefreshToken().getToken());
+		
+		byte[] postDataBytes = getDataString(postData).getBytes( StandardCharsets.UTF_8 );
+		
+		HttpURLConnection conn;
+		conn = connectUri(refreshUrl, "POST");
+		
+		LOGGER.debug("Post data: " + new String (postDataBytes));
+		
+		conn.setRequestProperty("Content-Type", MediaType.APPLICATION_FORM_URLENCODED);
+		conn.setRequestProperty("charset", StandardCharsets.UTF_8.name());
+		conn.setRequestProperty("Content-Length", Integer.toString(postDataBytes.length ));
+		conn.connect();
+		
+		OutputStream os = conn.getOutputStream();
+		os.write(postDataBytes);
+		os.flush();
+		os.close();
+		
+		InputStream is = null;
+		try {
+			is = conn.getInputStream();
+		
+		} catch ( IOException ioe ) {
+			is = conn.getErrorStream();
+			LOGGER.error("(1) Token refresh rejected: " + conn.getResponseCode());
+		}
+		
+		String response = new String(is.readAllBytes());
+		int responseCode = conn.getResponseCode();
+		
+		LOGGER.debug("Response code is " + responseCode );
+		LOGGER.debug("Response is " + response );
+		
+		if ( response != null && response.length() > 0 ) {
+			JSONObject resultObject = new JSONObject(response);
+			LOGGER.debug("response: " + resultObject.toString(4));
+			
+			if ( responseCode != 200 || resultObject.has("status_code") ) {
+				// indicates some error ...
+				LOGGER.error("code: " + responseCode + " - response: " + resultObject.toString(4));
+				return null;
+			}
+			return resultObject;
+		}	
+		return null;
+	}
+
+	
+	/**
+	 * Store the (new) tokens etc. back to the credentials file as JSON
+	 * 
+	 * @param credentials
+	 */
+	private void storeOAuthCredentials(OauthCredentials credentials ) {
+		
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			
+			mapper.writerWithDefaultPrettyPrinter().writeValue(new File(oauthCredentialsFile.get()), credentials);
+			
+			
+		} catch ( Exception e ) {
+			LOGGER.error("Error serializing new tokens to '" + oauthCredentialsFile.get() + "' ", e);
+		}
+	}
+
+	/**
+	 * Deserialize the credentials file into PoJo OauthCredentials
+	 * @see https://www.jsonschema2pojo.org/
+	 * 
+	 * @return credentials object, null if there is none or on any error
+	 */
+	private OauthCredentials getOAuthCredentials() {
+		OauthCredentials credentials = null;
+		
+		if ( this.oauthCredentialsFile.isPresent() && !this.oauthCredentialsFile.get().isEmpty() ) {
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+	
+				//JSON file to Java object
+				credentials = mapper.readValue(new File(oauthCredentialsFile.get()), OauthCredentials.class);
+	
+				LOGGER.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(credentials));
+				
+				return credentials;
+				
+			} catch ( Exception e ) {
+				LOGGER.error("Invalid configuration: given credentails file '" + oauthCredentialsFile.get() + "' either missing or not well formatted", e);
+			}
+		}
+		return null;
+	}
+
+
+	private String getBasicAuth() {
+		String userPassword = user.get() + ":" + password.get();
+		LOGGER.debug("Credentials: " + userPassword );
+		
+		return new String("Basic: " + Base64.getEncoder().encode(userPassword.getBytes()));
+	}
 
 
 	/**
@@ -600,9 +858,10 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 	 * @throws MalformedURLException
 	 * @throws IOException
 	 * @throws InterruptedException
+	 * @throws WebhookException 
 	 */
 	@Override
-	public HttpURLConnection pollDownloadTask(String downloadUrl) throws MalformedURLException, IOException, InterruptedException 
+	public HttpURLConnection pollDownloadTask(String downloadUrl) throws MalformedURLException, IOException, InterruptedException, WebhookException 
 	{
 		if ( downloadUrl == null || downloadUrl.isEmpty() )
 			return null;
@@ -635,8 +894,9 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 	 * @return
 	 * @throws MalformedURLException
 	 * @throws IOException
+	 * @throws WebhookException 
 	 */
-	private HttpURLConnection connectToDownloadTask(String downloadUrl) throws MalformedURLException, IOException 
+	private HttpURLConnection connectToDownloadTask(String downloadUrl) throws MalformedURLException, IOException, WebhookException 
 	{
 		
 		cmgr.getCookies(new URL(downloadUrl));
@@ -647,7 +907,7 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 		handleCookies(downloadUrl, conn);
 		cmgr.setCookies(conn);
 
-		conn.setRequestProperty("Authorization", "Basic " + getBasicAuthenticationEncoding() );
+		conn.setRequestProperty("Authorization", getAuthentication() );
 		conn.setRequestProperty("Content-Type", "application/json");
 		
 		conn.connect();
@@ -671,6 +931,19 @@ public class RestServicesWrapperImpl extends HttpConnectionHandler implements Re
 			LOGGER.error("JSON Error", e);
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * Format a GregorianCalendar Object to a string with "yyyy-MM-dd HH:mm:ss z"
+	 *
+	 * @return formatted datetime string with TZ
+	 */
+	private static String toGMTString(GregorianCalendar date)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssXXX");
+		String gmt = sdf.format(date.getTime());
+		return gmt;
 	}
 
 }

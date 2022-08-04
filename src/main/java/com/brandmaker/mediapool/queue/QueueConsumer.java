@@ -1,5 +1,6 @@
 package com.brandmaker.mediapool.queue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class QueueConsumer {
 	
 	/** Configured list of channels which we want to manage */
 	@Value("#{'${spring.application.system.channels:}'.split(',')}")
-	private List<String> mySyncChannels;
+	private ArrayList<String> mySyncChannels;
 
 	/**
 	 * <p>This method will be called as soon as something is enqueued and avaliable for the consumer(s)
@@ -50,7 +51,7 @@ public class QueueConsumer {
 	public void onMessage(Map<String, Object> message) {
 		
 		try {
-			
+			LOGGER.info("watching channels: " + mySyncChannels.toString() );
 			MediaPoolEvent event = new MediaPoolEvent(message);
 			event.setMySyncChannels(mySyncChannels);
 			

@@ -32,3 +32,4 @@ build/
 /activemq-data/
 /cookies.ser
 /assets/
+/oauth-credentials.json

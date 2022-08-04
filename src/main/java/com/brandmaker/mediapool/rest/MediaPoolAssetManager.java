@@ -46,7 +46,7 @@ public class MediaPoolAssetManager {
 			switch ( evt ) {
 				
 				case TEST:
-					LOGGER.info("Test event reveived" );
+					LOGGER.info("Test event received" );
 					break;
 					
 				case TREE_CHANGED: // not implemented in the demo

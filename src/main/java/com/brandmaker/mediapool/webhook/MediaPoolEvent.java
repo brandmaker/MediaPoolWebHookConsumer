@@ -47,7 +47,7 @@ public class MediaPoolEvent
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MediaPoolEvent.class);
 
-	private List<String> mySyncChannels;
+	private ArrayList<String> mySyncChannels;
 	
 	/**
 	 * Inner class which maps property values to class variables
@@ -523,9 +523,10 @@ public boolean isPublishingEvent() {
 		}
 	}
 	
-	public List<String>getMySyncChannels() {
+	public ArrayList<String>getMySyncChannels() {
 		return mySyncChannels;
 	}
+	
 	/**
 	 *	<p>Is the current event related to one of the channels we are working for?
 	 * 	<p>The channels we are listening on are configured in the application.yaml
@@ -535,6 +536,8 @@ public boolean isPublishingEvent() {
 	 * @return
 	 */
 	public boolean isMyChannel() {
+		
+		LOGGER.info("watching channels: " + (mySyncChannels != null ? mySyncChannels.toString() : "NONE!") );
 		
 		ArrayList<String> channels = this.getChannelsFromPayload();
 		
@@ -710,7 +713,7 @@ public boolean isPublishingEvent() {
 		this.user = user;
 	}
 
-	public void setMySyncChannels(List<String> mySyncChannels) {
+	public void setMySyncChannels(ArrayList<String> mySyncChannels) {
 		this.mySyncChannels = mySyncChannels;
 	}
 

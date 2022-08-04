@@ -27,13 +27,12 @@ This repository contains a blue print for a webhook, which is capable of the fol
 
 ### Environment
 
-* Java >= 8
+* Java >= 9
 * Spring https://spring.io/
 * ActivMQ https://activemq.apache.org/
 * Eclipse / IntelliJ
 * Maven 
 * Github
-* Travis-CI https://travis-ci.org/getting_started
 
 ### BrandMaker Media Pool
 
@@ -44,6 +43,36 @@ Please make yousrself familiar with the basic principles of Webhooks. There are 
 
 Furthermore, to understand how BrandMaker Media Pool is making use of this kind of loosely coupled integrations, read the tutorial available here
 https://github.com/brandmaker/MediaPoolWebHookConsumer/blob/master/Media-Pool_WebHook-Push-API-Description_6-6_EN_20200203.pdf
+
+### Authentication
+
+BrandMaker releases prior to 7.0 need Basic Authentication. Please provide a user id and a password within the application.yaml file for these versions.
+
+With LTS release 7.0 and newer, please use CAS in order to authenticate via oAuth2 access tokens. In order to retrieve those tokens, follow the guideline available on https://developers.brandmaker.com/guides/auth/ and the following steps:
+
+1. Register your client in the administration (Fusion / Registered Apps)
+1. Authenticate a user via usual oAuth2 web flow, i.e. with "postman"
+1. Store the tokens etc. into a JSON file in the working directory of the running application
+1. Configure the file in the application.yaml and uncomment userid and password
+
+Example of a credentials JSON file:
+
+```
+{
+  "server" : "https://cas.brandmaker.com/api/v1.1/token",
+  "clientId" : "9d4 ... ca",
+  "clientSecret" : "1 ... Eo",
+  "accessToken" : {
+    "token" : "__--CAS--__uXWiXloK6Y3fA j.. .y6durAClyKMmlyclfDgb19Od6M8s8",
+    "expires" : "2022-08-04T08:43:52Z"
+  },
+  "refreshToken" : {
+    "token" : "__--CAS--__UlrLUt_yPjqtY. .. .MeUDhocmE9DN6wUVnmX6XNPvkepQTXsCk",
+    "expires" : "2023-08-04T07:43:52Z"
+  }
+}
+```
+
 
 ## General Concept
 
