@@ -108,7 +108,7 @@ Api Documentation and test client generated with open-api and swagger-ui: http:/
 
 ## Project state
 
-[![Build Status](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer.svg?branch=master)](https://travis-ci.org/brandmaker/MediaPoolWebHookConsumer)
+[![Java CI with Maven](https://github.com/brandmaker/MediaPoolWebHookConsumer/actions/workflows/maven.yml/badge.svg)](https://github.com/brandmaker/MediaPoolWebHookConsumer/actions/workflows/maven.yml)
 
 
 # Further Information
